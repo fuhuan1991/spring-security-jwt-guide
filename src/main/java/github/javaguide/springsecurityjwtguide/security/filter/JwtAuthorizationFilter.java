@@ -35,6 +35,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
 
+        System.out.println("Filter");
+        System.out.println("Initial Context: " + SecurityContextHolder.getContext());
+
         String token = request.getHeader(SecurityConstants.TOKEN_HEADER);
         if (token == null || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             SecurityContextHolder.clearContext();
@@ -51,10 +54,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 return;
             }
             authentication = JwtTokenUtils.getAuthentication(tokenValue);
+            System.out.println("UsernamePasswordAuthenticationToken: " + authentication);
         } catch (JwtException e) {
             logger.error("Invalid jwt : " + e.getMessage());
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println("Final Context: " + SecurityContextHolder.getContext());
         chain.doFilter(request, response);
     }
 }
